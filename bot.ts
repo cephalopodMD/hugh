@@ -34,6 +34,7 @@ client.on('ready', async () => {
 
     fakeTweet(msg.content)
 
+    // Clear all the old reacts for debugging
     // messages.forEach(m => m.reactions.cache.forEach(r => r.users.remove(client!.user!.id!)))
 });
 
