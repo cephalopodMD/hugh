@@ -21,6 +21,9 @@ client.on('ready', async () => {
     const channel: TextChannel = client.channels.cache.get(channelID) as any;
     const messages:  Collection<string, Message> = await channel.messages.fetch({limit: 100})
     console.log(`Received ${messages.size} messages`);
+    // Clear all the old reacts for debugging
+    //messages.forEach(m => m.reactions.cache.forEach(r => r.users.remove(client!.user!.id!)))
+
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
     let sorted = messages
         .filter(a => a.author.id !== client.user.id && (!a.reactions.cache.has('🤖') || !a.reactions.cache.get('🤖').me))
@@ -33,10 +36,8 @@ client.on('ready', async () => {
     const msg: Message = sorted.first();
     // React so Hugh won't check this message again
     await msg.react('🤖');
-    await msg.reply('Should I post this up, Jimbo?')
-
-    // Clear all the old reacts for debugging
-    // messages.forEach(m => m.reactions.cache.forEach(r => r.users.remove(client!.user!.id!)))
+    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'uh... Son']
+    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * 6)]}?`)
 });
 
 client.on('messageReactionAdd', async reaction => {
