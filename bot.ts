@@ -4,7 +4,7 @@ import { Client, Collection, Intents, Message, TextChannel, EmojiIdentifierResol
 const channelID: string = '900566991130206280'
 
 const fakeTweet = (tweet: any) => {
-    console.log(`Fake Tweeting "${tweet}"`);
+    console.log(`🐓 Fake Tweeting "${tweet}"`);
 }
 
 const client: Client = new Client({
@@ -36,7 +36,8 @@ client.on('ready', async () => {
     const msg: Message = sorted.first();
     // React so Hugh won't check this message again
     await msg.react('🤖');
-    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'uh... Son']
+    console.log(`🤖 Consider posting "${msg.content}`)
+    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'uh... Son']
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?`)
 });
 
