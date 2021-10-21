@@ -23,7 +23,7 @@ client.on('ready', async () => {
     console.log(`Received ${messages.size} messages`);
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
     let sorted = messages
-        .filter(a => !a.reactions.cache.has('🍆') || !a.reactions.cache.get('🍆')!.me)
+        .filter(a => !a.reactions.cache.has('🤖') || !a.reactions.cache.get('🤖')!.me)
         // this should probably be counts of users who reacted or something
         .sort((a, b) => b.reactions.cache.size - a.reactions.cache.size)
         .first(3)
@@ -32,7 +32,7 @@ client.on('ready', async () => {
     
     const msg: Message = sorted[0]!;
     // React so Hugh won't check this message again
-    await msg.react('🍆');
+    await msg.react('🤖');
 
     fakeTweet(msg.content)
 
