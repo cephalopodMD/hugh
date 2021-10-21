@@ -1,5 +1,6 @@
 import { Client, Collection, Intents, Message, TextChannel, EmojiIdentifierResolvable } from "discord.js";
 
+// TODO: point this lad to the correct channel - this is just for dev purposes
 const channelID: string = '900566991130206280'
 
 const fakeTweet = (tweet: string) => {
@@ -23,6 +24,7 @@ client.on('ready', async () => {
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
     let sorted = messages
         .filter(a => !a.reactions.cache.has('🍆') || !a.reactions.cache.get('🍆')!.me)
+        // this should probably be counts of users who reacted or something
         .sort((a, b) => b.reactions.cache.size - a.reactions.cache.size)
         .first(3)
     console.log('Top 3 unposted by reacts:')
