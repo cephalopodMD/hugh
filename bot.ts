@@ -66,7 +66,7 @@ async function run() {
     await msg.react(reacc);
     console.log(`${reacc} Consider posting "${msg.content}`)
     const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'uh... Son']
-    //await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
+    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
 
 discordClient.on('ready', async () => {
