@@ -3,17 +3,19 @@ const twitterConfig = require('./config');
 const Twitter = require('twitter-lite');
 
 // Clear old reaccs for debugging purposes
-const blankSlate = true
-// TODO: point this lad to the correct channel - this is just for dev purposes
-const channelID: string = '900566991130206280'
+const blankSlate = false
+const channelID: string = '900566991130206280' // test
+// const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
+// every 3 days
+const postInterval = 3 * 24 * 60 * 60 * 1000
+// reacc to use (get overriden to :hugh: id at runtime)
 let reacc = '🐓'
 
 const twitterClient = new Twitter(twitterConfig);
 
 async function fakeTweet(tweet: any) {
-    console.log(`${reacc} Fake Tweeting "${tweet}"`);
     twitterClient.post('statuses/update', { status: tweet }).then(result => {
-        console.log('You successfully tweeted this : "' + result.text + '"');
+        console.log(`🐓 Successfully tweeted "${result.text}"`);
     }).catch(console.error);
 }
 
@@ -24,6 +26,8 @@ const discordClient: Client = new Client({
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS
     ]
 });
+
+const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
 async function getChannelHistory(channel: TextChannel) {
     let result: Collection<string, Message> = new Collection<string, Message>()
@@ -37,35 +41,38 @@ async function getChannelHistory(channel: TextChannel) {
     return result
 }
 
-function reactionCount(message: Message) {
+async function setReactionCount(message: Message) {
     let user_ids = new Set<string>()
-    message.reactions.cache.forEach(r => {
-        r.users.cache.forEach(u => user_ids.add(u.id))
-    })
-    return user_ids.size
+    await Promise.all(arr(message.reactions.cache).map(async r => {
+        const users = await r.users.fetch();
+        users.forEach(u => user_ids.add(u.id))
+    }));
+    (message as any).reactionCount = user_ids.size;
+    return message
 }
 
 async function run() {
+    console.log('reacc is ', reacc)
     const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
     console.log(`Received ${messages.size} messages from history`);
-    messages.forEach(m => console.log(`  ${m.id} ${m.content}`))
 
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
-    let sorted = messages
+    let sorted = (await Promise.all(arr(messages)
         .filter(a => a.author.id !== discordClient.user.id && 
                      (!a.reactions.cache.has(reacc) || !a.reactions.cache.get(reacc).me))
-        .sort((a, b) => reactionCount(b) - reactionCount(a))
+        .map(setReactionCount)))
+        .sort((a: any, b: any) => b.reactionCount - a.reactionCount)
     // see sorted for debugging purposes
-    console.log('Top 3 unposted by reacts:')
-    sorted.forEach(message => console.log(`  ${message.reactions.cache.size} "${message.content}"`))
+    console.log('Top 5 unposted by reacts:')
+    sorted.slice(0, 5).forEach(message => console.log(`  ${(message as any).reactionCount} "${message.content}"`))
 
-    const msg: Message = sorted.first();
+    const msg: Message = sorted[0];
     // React so Hugh won't check this message again
     await msg.react(reacc);
-    console.log(`${reacc} Consider posting "${msg.content}`)
-    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'uh... Son']
+    console.log(`🐓 Consider posting "${msg.content}`)
+    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
 
@@ -75,23 +82,28 @@ discordClient.on('ready', async () => {
     const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
     const hughmoji = channel.guild.emojis.cache.find(emoji => emoji.name === 'hugh');
     if (hughmoji) {
-        reacc = `${hughmoji.name}:${hughmoji.id}`
-        console.log(`set emoji to ${reacc}`)
+        reacc = hughmoji.id
+        console.log(`set emoji to ${hughmoji.id}`)
     }
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
     console.log(`Received ${messages.size} messages from history`);
-    messages.forEach(m => console.log(`  ${m.id} ${m.content}`))
     // Clear all the old reacts for debugging
     if (blankSlate) {
-        for (let m of Array.from(messages.values())) {
-            for (let r of Array.from(m.reactions.cache.values())) {
-                await r.users.remove(discordClient.user.id);
+        await Promise.all(arr(messages).map(async m => {
+            if (m.author.id === discordClient.user.id) {
+                await m.delete()
+            } else if (m.reactions.cache.has(reacc) &&
+                       m.reactions.cache.get(reacc).me) {
+                await m.reactions.cache.get(reacc).users.remove(discordClient.user.id);
             }
-        }
+        }));
     }
 
-    setInterval(run, 30 * 1000)
+    channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n*...check out https://github.com/cephalopodMD/hugh to see what I do*')
+
+    run()
+    setInterval(run, postInterval)
 });
 
 discordClient.on('messageReactionAdd', async reaction => {
