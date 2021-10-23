@@ -36,7 +36,7 @@ async function getChannelHistory(channel: TextChannel) {
     while((messages = await channel.messages.fetch({ limit: 100, before })).size > 0) {
         messages.forEach((v, k) => result.set(k, v))
         before = messages.lastKey()
-        process.stdout.write(`\rfetched ${messages.size} messages - last id: ${before}`)
+        process.stdout.write(`\rfetched ${result.size} messages - last id: ${before}`)
     }
     console.log()
     return result
