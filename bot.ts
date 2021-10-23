@@ -13,7 +13,7 @@ let reacc = '🐓'
 
 const twitterClient = new Twitter(twitterConfig);
 
-async function fakeTweet(tweet: any) {
+async function postTweet(tweet: any) {
     twitterClient.post('statuses/update', { status: tweet }).then(result => {
         console.log(`🐓 Successfully tweeted "${result.text}"`);
     }).catch(console.error);
@@ -117,7 +117,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         !reaction.message.reactions.cache.get(reacc)?.me) {
         const repliedTo: Message = await reaction.message.channel.messages.fetch(reaction.message.reference.messageId);
         await reaction.message.react(reacc);
-        fakeTweet(repliedTo.content)
+        postTweet(repliedTo.content)
     }
 })
 
