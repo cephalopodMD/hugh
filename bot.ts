@@ -33,10 +33,10 @@ async function getChannelHistory(channel: TextChannel) {
     let result: Collection<string, Message> = new Collection<string, Message>()
     let messages: Collection<string, Message>
     let before = undefined
-    // TODO set to 100 instead of 10
-    while((messages = await channel.messages.fetch({ limit: 10, before })).size > 0) {
+    while((messages = await channel.messages.fetch({ limit: 100, before })).size > 0) {
         messages.forEach((v, k) => result.set(k, v))
         before = messages.lastKey()
+        console.log(`fetched ${messages.size} messages - last id: ${before}`)
     }
     return result
 }
