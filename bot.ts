@@ -71,7 +71,7 @@ async function run() {
     const msg: Message = sorted[0];
     // React so Hugh won't check this message again
     await msg.react(reacc);
-    console.log(`🐓 Consider posting "${msg.content}`)
+    console.log(`🐓 Consider posting "${msg.content}"`)
     const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
