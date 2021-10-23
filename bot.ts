@@ -100,7 +100,11 @@ discordClient.on('ready', async () => {
         }));
     }
 
-    channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n*...check out https://github.com/cephalopodMD/hugh to see what I do*')
+    // If there are no Hugh messages, introduce yourself
+    if (blankSlate || !messages.reduce((a, m) => a || m.author.id === discordClient.user.id, false)) {
+        channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n' +
+                     '*...check out https://github.com/cephalopodMD/hugh to see what I do*')
+    }
 
     run()
     setInterval(run, postInterval)
