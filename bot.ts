@@ -74,7 +74,7 @@ async function run() {
     await msg.react(reacc);
     console.log(`🐓 Consider posting "${msg.content}"`)
     const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
-    // await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
+    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
 
 discordClient.on('ready', async () => {
@@ -103,8 +103,8 @@ discordClient.on('ready', async () => {
 
     // If there are no Hugh messages, introduce yourself
     if (blankSlate || !messages.reduce((a, m) => a || m.author.id === discordClient.user.id, false)) {
-        // channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n' +
-        //              '*...check out https://github.com/cephalopodMD/hugh to see what I do*')
+        channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n' +
+                     '*...check out https://github.com/cephalopodMD/hugh to see what I do*')
     }
 
     run()
