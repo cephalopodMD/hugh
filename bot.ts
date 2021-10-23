@@ -4,8 +4,8 @@ const Twitter = require('twitter-lite');
 
 // Clear old reaccs for debugging purposes
 const blankSlate = false
-const channelID: string = '900566991130206280' // test
-// const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
+// const channelID: string = '900566991130206280' // test
+const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
 // every 3 days
 const postInterval = 3 * 24 * 60 * 60 * 1000
 // reacc to use (get overriden to :hugh: id at runtime)
