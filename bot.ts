@@ -94,8 +94,7 @@ discordClient.on('ready', async () => {
         await Promise.all(arr(messages).map(async m => {
             if (m.author.id === discordClient.user.id) {
                 await m.delete()
-            } else if (m.reactions.cache.has(reacc) &&
-                       m.reactions.cache.get(reacc).me) {
+            } else if (m.reactions.cache.get(reacc)?.me) {
                 await m.reactions.cache.get(reacc).users.remove(discordClient.user.id);
             }
         }));
