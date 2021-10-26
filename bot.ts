@@ -1,13 +1,24 @@
+// This software is provided as is with no guarantees.
+// Use it however you wish,
+// code for the love of the game,
+// and don't you forget, my darlings:
+//   IT
+//       SHOULD
+//     BE
+//         ✨FUN!✨
+
 import { Client, Collection, Intents, Message, TextChannel } from "discord.js";
 const twitterConfig = require('./config');
 const Twitter = require('twitter-lite');
+require('dotenv').config();
 
+const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
 // Clear old reaccs for debugging purposes
 const blankSlate = false
 // const channelID: string = '900566991130206280' // test
 const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
-// every 3 days
-const postInterval = 3 * 24 * 60 * 60 * 1000
+// every 3 days and 5 hours
+const postInterval = 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000
 // reacc to use (get overriden to :hugh: id at runtime)
 let reacc = '🐓'
 
@@ -27,8 +38,10 @@ const discordClient: Client = new Client({
     ]
 });
 
+// convert 😒 Collections into 😏 Arrays 
 const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
+// Get more than 100 messages at a time
 async function getChannelHistory(channel: TextChannel) {
     let result: Collection<string, Message> = new Collection<string, Message>()
     let messages: Collection<string, Message>
@@ -48,6 +61,7 @@ async function setReactionCount(message: Message) {
         const users = await r.users.fetch();
         users.forEach(u => user_ids.add(u.id))
     }));
+    // if it's stupid, but it works, it's not stupid
     (message as any).reactionCount = user_ids.size;
     return message
 }
@@ -65,7 +79,7 @@ async function run() {
                      (!a.reactions.cache.has(reacc) || !a.reactions.cache.get(reacc).me))
         .map(setReactionCount)))
         .sort((a: any, b: any) => b.reactionCount - a.reactionCount)
-    // see sorted for debugging purposes
+    // see top 5 for debugging purposes
     console.log('Top 5 unposted by reacts:')
     sorted.slice(0, 5).forEach(message => console.log(`  ${(message as any).reactionCount} "${message.content}"`))
 
@@ -73,7 +87,6 @@ async function run() {
     // React so Hugh won't check this message again
     await msg.react(reacc);
     console.log(`🐓 Consider posting "${msg.content}"`)
-    const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
 
@@ -89,6 +102,7 @@ discordClient.on('ready', async () => {
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
     console.log(`Received ${messages.size} messages from history`);
+
     // Clear all the old reacts for debugging
     if (blankSlate) {
         await Promise.all(arr(messages).map(async m => {
@@ -106,6 +120,7 @@ discordClient.on('ready', async () => {
                      '*...check out https://github.com/cephalopodMD/hugh to see what I do*')
     }
 
+    // run the main job once, then periodically
     run()
     setInterval(run, postInterval)
 });
@@ -114,7 +129,7 @@ discordClient.on('messageReactionAdd', async reaction => {
     if (reaction.message.author.id === discordClient.user.id &&
         reaction.message.reference &&
         !reaction.message.reactions.cache.get(reacc)?.me) {
-        const repliedTo: Message = await reaction.message.channel.messages.fetch(reaction.message.reference.messageId);
+        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
         await reaction.message.react(reacc);
         postTweet(repliedTo.content)
     }
@@ -127,6 +142,4 @@ discordClient.on('messageReactionAdd', async reaction => {
 //     }
 // });
 
-// Run dotenv
-require('dotenv').config();
 discordClient.login(process.env.DISCORD_TOKEN);
