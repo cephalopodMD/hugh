@@ -41,6 +41,16 @@ const discordClient: Client = new Client({
 // convert 😒 Collections into 😏 Arrays 
 const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
+discordClient.on('messageReactionAdd', async reaction => {
+    if (reaction.message.author.id === discordClient.user.id &&
+        reaction.message.reference &&
+        !reaction.message.reactions.cache.get(reacc)?.me) {
+        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
+        await reaction.message.react(reacc);
+        postTweet(repliedTo.content)
+    }
+})
+
 // Get more than 100 messages at a time
 async function getChannelHistory(channel: TextChannel) {
     let result: Collection<string, Message> = new Collection<string, Message>()
@@ -124,16 +134,6 @@ discordClient.on('ready', async () => {
     run()
     setInterval(run, postInterval)
 });
-
-discordClient.on('messageReactionAdd', async reaction => {
-    if (reaction.message.author.id === discordClient.user.id &&
-        reaction.message.reference &&
-        !reaction.message.reactions.cache.get(reacc)?.me) {
-        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
-        await reaction.message.react(reacc);
-        postTweet(repliedTo.content)
-    }
-})
 
 // Jim jam for debugging purposes
 // discordClient.on('messageCreate', (msg: Message) => {
