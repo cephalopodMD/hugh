@@ -7,7 +7,7 @@
 //     BE
 //         ✨FUN!✨
 
-import { Client, Collection, Intents, Message, TextChannel } from "discord.js";
+import { Client, Collection, Intents, Message, TextChannel, MessageOptions, MessageEmbed } from "discord.js";
 const twitterConfig = require('./config');
 const Twitter = require('twitter-lite');
 require('dotenv').config();
@@ -25,9 +25,9 @@ let reacc = '🐓'
 const twitterClient = new Twitter(twitterConfig);
 
 async function postTweet(tweet: any) {
-    twitterClient.post('statuses/update', { status: tweet }).then(result => {
-        console.log(`🐓 Successfully tweeted "${result.text}"`);
-    }).catch(console.error);
+    let result = await twitterClient.post('statuses/update', { status: tweet }).catch(console.error);
+    console.log(`🐓 Successfully tweeted "${result.text}"`);
+    return result;
 }
 
 const discordClient: Client = new Client({
@@ -44,10 +44,15 @@ const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 discordClient.on('messageReactionAdd', async reaction => {
     if (reaction.message.author.id === discordClient.user.id &&
         reaction.message.reference &&
-        !reaction.message.reactions.cache.get(reacc)?.me) {
+        !reaction.message.reactions.cache.get(reacc)?.me &&
+        reaction.message.channel.id === channelID) {
         const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
         await reaction.message.react(reacc);
-        postTweet(repliedTo.content)
+        let result = await postTweet(repliedTo.content)
+        let embed: MessageEmbed = new MessageEmbed()
+        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/i/web/status/${result.id_str}) for you`)
+        let msg: MessageOptions = {content: `Thanks, ${j[Math.floor(Math.random() * j.length)]}`, embeds: [embed]}
+        reaction.message.edit(msg)
     }
 })
 
@@ -125,9 +130,13 @@ discordClient.on('ready', async () => {
     }
 
     // If there are no Hugh messages, introduce yourself
-    if (blankSlate || !messages.reduce((a, m) => a || m.author.id === discordClient.user.id, false)) {
-        channel.send('WUSS POPPIN JIMBO? https://twitter.com/hugh_beta\n' +
-                     '*...check out https://github.com/cephalopodMD/hugh to see what I do*')
+    if (blankSlate || !messages.reduce((a, m) => a || (m.author.id === discordClient.user.id && !m.reference), false)) {
+        let embed: MessageEmbed = new MessageEmbed()
+        embed.setTitle('WUSS POPPIN JIMBO?')
+        embed.setDescription('Follow me on [twitter](https://twitter.com/hugh_beta)\n' +
+                             '*...and check out my [github](https://github.com/cephalopodMD/hugh) to see what I do*')
+        let msg: MessageOptions = {embeds: [embed]}
+        channel.send(msg)
     }
 
     // run the main job once, then periodically
