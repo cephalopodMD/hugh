@@ -82,7 +82,6 @@ async function setReactionCount(message: Message) {
 }
 
 async function run() {
-    console.log('reacc is ', reacc)
     const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
@@ -105,43 +104,47 @@ async function run() {
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
 }
 
+let firstRun = true;
+
 discordClient.on('ready', async () => {
     console.log(`Logged in as ${discordClient.user.tag}!`);
+    
+    if (firstRun) {
+        const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
+        firstRun = false;
+        const hughmoji = channel.guild.emojis.cache.find(emoji => emoji.name === 'hugh');
+        if (hughmoji) {
+            reacc = hughmoji.id
+            console.log(`set emoji to ${hughmoji.id}`)
+        }
 
-    const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
-    const hughmoji = channel.guild.emojis.cache.find(emoji => emoji.name === 'hugh');
-    if (hughmoji) {
-        reacc = hughmoji.id
-        console.log(`set emoji to ${hughmoji.id}`)
+        const messages: Collection<string, Message> = await getChannelHistory(channel)
+        console.log(`Received ${messages.size} messages from history`);
+
+        // Clear all the old reacts for debugging
+        if (blankSlate) {
+            await Promise.all(arr(messages).map(async m => {
+                if (m.author.id === discordClient.user.id) {
+                    await m.delete()
+                } else if (m.reactions.cache.get(reacc)?.me) {
+                    await m.reactions.cache.get(reacc).users.remove(discordClient.user.id);
+                }
+            }));
+        }
+
+        // If there are no stand-alone Hugh messages, introduce yourself
+        if (blankSlate || !messages.reduce((a, m) => a || (m.author.id === discordClient.user.id && !m.reference), false)) {
+            let embed: MessageEmbed = new MessageEmbed()
+            embed.setTitle('WUSS POPPIN JIMBO?')
+            embed.setDescription('Follow me on [twitter](https://twitter.com/hugh_beta)\n' +
+                                '*...and check out my [github](https://github.com/cephalopodMD/hugh) to see what I do*')
+            let msg: MessageOptions = {embeds: [embed]}
+            channel.send(msg)
+        }
     }
 
-    const messages: Collection<string, Message> = await getChannelHistory(channel)
-    console.log(`Received ${messages.size} messages from history`);
-
-    // Clear all the old reacts for debugging
-    if (blankSlate) {
-        await Promise.all(arr(messages).map(async m => {
-            if (m.author.id === discordClient.user.id) {
-                await m.delete()
-            } else if (m.reactions.cache.get(reacc)?.me) {
-                await m.reactions.cache.get(reacc).users.remove(discordClient.user.id);
-            }
-        }));
-    }
-
-    // If there are no stand-alone Hugh messages, introduce yourself
-    if (blankSlate || !messages.reduce((a, m) => a || (m.author.id === discordClient.user.id && !m.reference), false)) {
-        let embed: MessageEmbed = new MessageEmbed()
-        embed.setTitle('WUSS POPPIN JIMBO?')
-        embed.setDescription('Follow me on [twitter](https://twitter.com/hugh_beta)\n' +
-                             '*...and check out my [github](https://github.com/cephalopodMD/hugh) to see what I do*')
-        let msg: MessageOptions = {embeds: [embed]}
-        channel.send(msg)
-    }
-
-    // run the main job once, then periodically
-    // run()
-    setInterval(run, postInterval)
+    // run the main job
+    run()
 });
 
 // Jim jam for debugging purposes
@@ -152,3 +155,4 @@ discordClient.on('ready', async () => {
 // });
 
 discordClient.login(process.env.DISCORD_TOKEN);
+setInterval(() => discordClient.login(process.env.DISCORD_TOKEN), postInterval);
