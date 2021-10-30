@@ -140,7 +140,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job once, then periodically
-    run()
+    // run()
     setInterval(run, postInterval)
 });
 
