@@ -129,7 +129,7 @@ discordClient.on('ready', async () => {
         }));
     }
 
-    // If there are no Hugh messages, introduce yourself
+    // If there are no stand-alone Hugh messages, introduce yourself
     if (blankSlate || !messages.reduce((a, m) => a || (m.author.id === discordClient.user.id && !m.reference), false)) {
         let embed: MessageEmbed = new MessageEmbed()
         embed.setTitle('WUSS POPPIN JIMBO?')
@@ -140,7 +140,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job once, then periodically
-    // run()
+    run()
     setInterval(run, postInterval)
 });
 
