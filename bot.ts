@@ -50,7 +50,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         await reaction.message.react(reacc);
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
-        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/i/web/status/${result.id_str}) for you`)
+        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you`)
         let msg: MessageOptions = {content: `Thanks, ${j[Math.floor(Math.random() * j.length)]}`, embeds: [embed]}
         reaction.message.edit(msg)
     }
@@ -139,7 +139,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job
-    run()
+    // run()
     setInterval(run, postInterval);
 });
 
