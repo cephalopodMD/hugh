@@ -54,12 +54,13 @@ discordClient.on('messageReactionAdd', async reaction => {
             const users = await r.users.fetch();
             users.forEach(u => user_ids.add(u.id))
         }));
+        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
+        console.log(`${user_ids.size} votes for ${repliedTo.content}`)
         if (user_ids.size < voteThreshold) {
             return;
         }
 
         // Reacc & post
-        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
         await reaction.message.react(reacc);
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
