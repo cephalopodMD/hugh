@@ -15,10 +15,12 @@ require('dotenv').config();
 const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
 // Clear old reaccs for debugging purposes
 const blankSlate = false
-// const channelID: string = '900566991130206280' // test
-const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
+const channelID: string = '900566991130206280' // test
+// const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
 // every 3 days and 5 hours
 const postInterval = 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000
+// Minimum # of votes needed to post
+const voteThreshold = 3
 // reacc to use (get overriden to :hugh: id at runtime)
 let reacc = '🐓'
 
@@ -43,15 +45,27 @@ const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
 discordClient.on('messageReactionAdd', async reaction => {
     if (reaction.message.author.id === discordClient.user.id &&
+        reaction.message.channel.id === channelID &&
         reaction.message.reference &&
-        !reaction.message.reactions.cache.get(reacc)?.me &&
-        reaction.message.channel.id === channelID) {
+        !reaction.message.reactions.cache.get(reacc)?.me) {
+        // Check for 3 votes
+        let user_ids = new Set<string>()
+        await Promise.all(arr(reaction.message.reactions.cache).map(async r => {
+            const users = await r.users.fetch();
+            users.forEach(u => user_ids.add(u.id))
+        }));
+        if (user_ids.size < voteThreshold) {
+            return;
+        }
+
+        // Reacc & post
         const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
         await reaction.message.react(reacc);
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
-        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you`)
-        let msg: MessageOptions = {content: `Thanks, ${j[Math.floor(Math.random() * j.length)]}`, embeds: [embed]}
+        const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)].toUpperCase()}!`
+        embed.setDescription(`(also I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you)`)
+        let msg: MessageOptions = {content, embeds: [embed]}
         reaction.message.edit(msg)
     }
 })
@@ -101,7 +115,7 @@ async function run() {
     // React so Hugh won't check this message again
     await msg.react(reacc);
     console.log(`🐓 Consider posting "${msg.content}"`)
-    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...reacc 2 tweet*`)
+    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...feed me ${voteThreshold} reacc 2 tweet*`)
 }
 
 discordClient.on('ready', async () => {
