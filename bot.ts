@@ -15,8 +15,8 @@ require('dotenv').config();
 const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
 // Clear old reaccs for debugging purposes
 const blankSlate = false
-const channelID: string = '900566991130206280' // test
-// const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
+// const channelID: string = '900566991130206280' // test
+const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
 // every 3 days and 5 hours
 const postInterval = 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000
 // Minimum # of votes needed to post
