@@ -65,7 +65,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
         const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)].toUpperCase()}!`
-        embed.setDescription(`(also I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you)`)
+        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you`)
         let msg: MessageOptions = {content, embeds: [embed]}
         reaction.message.edit(msg)
     }
@@ -116,7 +116,7 @@ async function run() {
     // React so Hugh won't check this message again
     await msg.react(reacc);
     console.log(`🐓 Consider posting "${msg.content}"`)
-    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...feed me ${voteThreshold} reacc 2 tweet*`)
+    await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...feed me ${voteThreshold} reaccs 2 tweet*`)
 }
 
 discordClient.on('ready', async () => {
