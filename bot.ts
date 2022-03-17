@@ -86,6 +86,13 @@ async function getChannelHistory(channel: TextChannel) {
 }
 
 async function setReactionCount(message: Message) {
+    // If there's only one react type (or no reacts), we can assume reaction count == reactions cache size
+    if (message.reactions.cache.reduce((a, m) => a.add(m.emoji), new Set()).size < 2) {
+        // if it's stupid, but it works, it's not stupid
+        (message as any).reactionCount = message.reactions.cache.size;
+        return message;
+    }
+
     let user_ids = new Set<string>()
     await Promise.all(arr(message.reactions.cache).map(async r => {
         const users = await r.users.fetch();
@@ -130,7 +137,7 @@ discordClient.on('ready', async () => {
     }
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
-    console.log(`Received ${messages.size} messages from history`);
+    console.log(`Received ${messages.size} messages from history on boot`);
 
     // Clear all the old reacts for debugging
     if (blankSlate) {
@@ -154,7 +161,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job
-    run()
+    // run()
     setInterval(run, postInterval);
 });
 
