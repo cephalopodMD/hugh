@@ -17,8 +17,8 @@ const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmot
 const blankSlate = false
 // const channelID: string = '900566991130206280' // test
 const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
-// every 3 days and 5 hours
-const postInterval = 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000
+// every 3 days
+const postInterval = 3 * 24 * 60 * 60 * 1000
 // Minimum # of votes needed to post
 const voteThreshold = 3
 // reacc to use (get overriden to :hugh: id at runtime)
@@ -64,7 +64,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         await reaction.message.react(reacc);
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
-        const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)].toUpperCase()}!`
+        const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)]}!`
         embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you`)
         let msg: MessageOptions = {content, embeds: [embed]}
         reaction.message.edit(msg)
