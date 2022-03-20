@@ -86,20 +86,24 @@ async function getChannelHistory(channel: TextChannel) {
 }
 
 async function setReactionCount(message: Message) {
-    // If there's only one react type (or no reacts), we can assume reaction count == reactions cache size
+    // Add a dash of random delay so we don't trash teh Discord API
+    let timeout = Math.floor(Math.random() * 10000);
+    await new Promise(resolve => setTimeout(resolve, timeout));
+
+    // If there's only one react type (or no reacts), we can assume reaction count == count of all reactions
     if (message.reactions.cache.reduce((a, m) => a.add(m.emoji), new Set()).size < 2) {
         // if it's stupid, but it works, it's not stupid
-        (message as any).reactionCount = message.reactions.cache.size;
-        return message;
+        (message as any).reactionCount = message.reactions.cache.reduce((a, r) => a += r.count, 0);
+    // Otherwise we have to account for users having multiple reaccs to the same post
+    } else {
+        let user_ids = new Set<string>()
+        await Promise.all(arr(message.reactions.cache).map(async r => {
+            const users = await r.users.fetch();
+            users.forEach(u => user_ids.add(u.id))
+        }));
+        // if it's stupid, but it works, it's not stupid
+        (message as any).reactionCount = user_ids.size;
     }
-
-    let user_ids = new Set<string>()
-    await Promise.all(arr(message.reactions.cache).map(async r => {
-        const users = await r.users.fetch();
-        users.forEach(u => user_ids.add(u.id))
-    }));
-    // if it's stupid, but it works, it's not stupid
-    (message as any).reactionCount = user_ids.size;
     return message
 }
 
