@@ -16,19 +16,19 @@ const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmot
 // Clear old reaccs for debugging purposes
 const blankSlate = false
 // const channelID: string = '900566991130206280' // test
-const channelID: string = '743905509412700202' // #🐓shitter-twitposting🥴
+const channelID: string = '743905509412700202' // #🦆shitter-twitposting🥴
 // every 3 days
 const postInterval = 3 * 24 * 60 * 60 * 1000
 // Minimum # of votes needed to post
 const voteThreshold = 3
 // reacc to use (get overriden to :hugh: id at runtime)
-let reacc = '🐓'
+let reacc = '🦆'
 
 const twitterClient = new Twitter(twitterConfig);
 
 async function postTweet(tweet: any) {
     let result = await twitterClient.post('statuses/update', { status: tweet }).catch(console.error);
-    console.log(`🐓 Successfully tweeted "${result.text}"`);
+    console.log(`🦆 Successfully tweeted "${result.text}"`);
     return result;
 }
 
@@ -126,7 +126,7 @@ async function run() {
     const msg: Message = sorted[0];
     // React so Hugh won't check this message again
     await msg.react(reacc);
-    console.log(`🐓 Consider posting "${msg.content}"`)
+    console.log(`🦆 Consider posting "${msg.content}"`)
     await msg.reply(`Should I post this up, ${j[Math.floor(Math.random() * j.length)]}?\n*...feed me ${voteThreshold} reaccs 2 tweet*`)
 }
 
