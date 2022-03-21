@@ -86,7 +86,7 @@ async function getChannelHistory(channel: TextChannel) {
 }
 
 async function setReactionCount(message: Message) {
-    // Add a dash of random delay so we don't trash teh Discord API
+    // Add a dash of random delay so we don't trash the Discord API
     let timeout = Math.floor(Math.random() * 60000);
     await new Promise(resolve => setTimeout(resolve, timeout));
 
