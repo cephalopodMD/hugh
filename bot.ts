@@ -86,10 +86,6 @@ async function getChannelHistory(channel: TextChannel) {
 }
 
 async function setReactionCount(message: Message) {
-    // Add a dash of random delay so we don't trash the Discord API
-    let timeout = Math.floor(Math.random() * 60000);
-    await new Promise(resolve => setTimeout(resolve, timeout));
-
     // If there's only one react type (or no reacts), we can assume reaction count == count of all reactions
     if (message.reactions.cache.reduce((a, m) => a.add(m.emoji), new Set()).size < 2) {
         // if it's stupid, but it works, it's not stupid
