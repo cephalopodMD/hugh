@@ -47,7 +47,7 @@ discordClient.on('messageReactionAdd', async reaction => {
     if (reaction.message.author.id === discordClient.user.id &&
         reaction.message.channel.id === channelID &&
         reaction.message.reference &&
-        !reaction.message.reactions.cache.get(reacc)?.me) {
+        !reaction.message.reactions.cache.find(r => r.me)) {
         // Check for 3 votes
         let user_ids = new Set<string>()
         await Promise.all(arr(reaction.message.reactions.cache).map(async r => {
@@ -116,7 +116,7 @@ async function run() {
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
     let sorted = (await Promise.all(arr(messages)
         .filter(a => a.author.id !== discordClient.user.id && 
-                     (!a.reactions.cache.has(reacc) || !a.reactions.cache.get(reacc).me))
+                     (a.reactions.cache.size == 0 || !a.reactions.cache.find(r => r.me)))
         .map(setReactionCount)))
         .sort((a: any, b: any) => b.reactionCount - a.reactionCount)
     // see top 5 for debugging purposes
@@ -148,8 +148,8 @@ discordClient.on('ready', async () => {
         await Promise.all(arr(messages).map(async m => {
             if (m.author.id === discordClient.user.id) {
                 await m.delete()
-            } else if (m.reactions.cache.get(reacc)?.me) {
-                await m.reactions.cache.get(reacc).users.remove(discordClient.user.id);
+            } else if (m.reactions.cache.find(r => r.me)) {
+                await m.reactions.cache.forEach(r => r.users.remove(discordClient.user.id));
             }
         }));
     }
