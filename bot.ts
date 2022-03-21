@@ -134,11 +134,11 @@ discordClient.on('ready', async () => {
     console.log(`Logged in as ${discordClient.user.tag}!`);
     const channel: TextChannel = discordClient.channels.cache.get(channelID) as any;
 
-    const hughmoji = channel.guild.emojis.cache.find(emoji => emoji.name === 'hugh');
-    if (hughmoji) {
-        reacc = hughmoji.id
-        console.log(`set emoji to ${hughmoji.id}`)
-    }
+    // const hughmoji = channel.guild.emojis.cache.find(emoji => emoji.name === 'hugh');
+    // if (hughmoji) {
+    //     reacc = hughmoji.id
+    //     console.log(`set emoji to ${hughmoji.id}`)
+    // }
 
     const messages: Collection<string, Message> = await getChannelHistory(channel)
     console.log(`Received ${messages.size} messages from history on boot`);
