@@ -110,11 +110,17 @@ async function run() {
     console.log(`Received ${messages.size} messages from history`);
 
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
+    let filtered = 1, mapped = 1
     let sorted = (await Promise.all(arr(messages)
-        .filter(a => a.author.id !== discordClient.user.id && 
-                     (a.reactions.cache.size == 0 || !a.reactions.cache.find(r => r.me)))
-        .map(setReactionCount)))
+        .filter(m => m.author.id !== discordClient.user.id && 
+                     (m.reactions.cache.size == 0 || !m.reactions.cache.find(r => r.me)))
+        .map(async (m, _, arr) => {
+            m = await setReactionCount(m)
+            process.stdout.write(`\rfetched reaccs for message ${mapped++} of ${arr.length}`)
+            return m
+        })))
         .sort((a: any, b: any) => b.reactionCount - a.reactionCount)
+    console.log()
     // see top 5 for debugging purposes
     console.log('Top 5 unposted by reacts:')
     sorted.slice(0, 5).forEach(message => console.log(`  ${(message as any).reactionCount} "${message.content}"`))
@@ -161,7 +167,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job
-    // run()
+    run()
     setInterval(run, postInterval);
 });
 
