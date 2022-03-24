@@ -44,6 +44,7 @@ let discordClient: Client = new Client({
 const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
 discordClient.on('messageReactionAdd', async reaction => {
+    console.log(JSON.stringify(reaction))
     if (reaction.message.author.id === discordClient.user.id &&
         reaction.message.channel.id === channelID &&
         reaction.message.reference &&
