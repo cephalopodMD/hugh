@@ -111,7 +111,7 @@ async function run() {
     console.log(`Received ${messages.size} messages from history`);
 
     // Sort by reaction counts and print messages. Use reacts to track whether Hugh has considered a post
-    let filtered = 1, mapped = 1
+    let mapped = 1
     let sorted = (await Promise.all(arr(messages)
         .filter(m => m.author.id !== discordClient.user.id && 
                      (m.reactions.cache.size == 0 || !m.reactions.cache.find(r => r.me)))
