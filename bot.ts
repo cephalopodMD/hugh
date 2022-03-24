@@ -44,7 +44,6 @@ let discordClient: Client = new Client({
 const arr = <K, V>(c: Collection<K, V>) => Array.from(c.values())
 
 discordClient.on('messageReactionAdd', async reaction => {
-    console.log(JSON.stringify(reaction))
     if (reaction.message.author.id === discordClient.user.id &&
         reaction.message.channel.id === channelID &&
         reaction.message.reference &&
@@ -55,7 +54,7 @@ discordClient.on('messageReactionAdd', async reaction => {
             const users = await r.users.fetch();
             users.forEach(u => user_ids.add(u.id))
         }));
-        const repliedTo: Message = reaction.message.channel.messages.cache.get(reaction.message.reference.messageId);
+        const repliedTo: Message = await reaction.message.channel.messages.fetch(reaction.message.reference.messageId);
         console.log(`${user_ids.size} votes for ${repliedTo.content}`)
         if (user_ids.size < voteThreshold) {
             return;
@@ -83,6 +82,12 @@ async function getChannelHistory(channel: TextChannel) {
         process.stdout.write(`\rfetched ${result.size} messages - last id: ${before}`)
     }
     console.log()
+    
+    process.stdout.write('Re-caching bot messages')
+    await Promise.all(result.map(message => {
+        if(message.author.id === discordClient.user.id) return channel.messages.fetch(message.id)
+    }))
+    process.stdout.write(' - done!\n')
     return result
 }
 
@@ -168,7 +173,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job
-    // run()
+    run()
     setInterval(run, postInterval);
 });
 
