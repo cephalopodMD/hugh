@@ -85,7 +85,9 @@ async function getChannelHistory(channel: TextChannel) {
     
     process.stdout.write('Re-caching bot messages and candidates')
     await Promise.all(result.map(message => {
-        if(message.author.id === discordClient.user.id && !message.reactions.cache.findKey(r => r.me)) {
+        if (message.author.id === discordClient.user.id &&
+            message.reference &&
+            !message.reactions.cache.findKey(r => r.me)) {
             return Promise.all([channel.messages.fetch(message.id), channel.messages.fetch(message.reference.messageId)])
         }
     }))
