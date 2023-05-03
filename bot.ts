@@ -17,8 +17,8 @@ const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmot
 const blankSlate = false
 // const channelID: string = '900566991130206280' // test
 const channelID: string = '743905509412700202' // #🦆shitter-twitposting🥴
-// every 3 days
-const postInterval = 3 * 24 * 60 * 60 * 1000
+// every 5 days
+const postInterval = 5 * 24 * 60 * 60 * 1000
 // Minimum # of votes needed to post
 const voteThreshold = 3
 // reacc to use (get overriden to :hugh: id at runtime)
