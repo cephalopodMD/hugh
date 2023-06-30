@@ -64,7 +64,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         await reaction.message.react(reacc);
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
-        const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)]}! This... PLEASES ME! I WILL RETURN IN 5 DAYS TIME FOR MORE!`
+        const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)]}! This... PLEASES ME! I will return in 5 days time to feed again.`
         embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id}) for you. Please like and retweet. Thank u.`)
         let msg: MessageOptions = {content, embeds: [embed]}
         reaction.message.edit(msg)
