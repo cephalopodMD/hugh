@@ -177,7 +177,7 @@ discordClient.on('ready', async () => {
     }
 
     // run the main job
-    run()
+    // run()
     setInterval(run, postInterval);
 });
 
