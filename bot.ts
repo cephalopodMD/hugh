@@ -12,7 +12,7 @@ const twitterConfig = require('./config');
 import { TwitterApi } from 'twitter-api-v2';
 require('dotenv').config();
 
-const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
+const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son', 'Jimnosperm']
 // Clear old reaccs for debugging purposes
 const blankSlate = false
 // const channelID: string = '900566991130206280' // test
