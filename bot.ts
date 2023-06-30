@@ -9,7 +9,7 @@
 
 import { Client, Collection, Intents, Message, TextChannel, MessageOptions, MessageEmbed } from "discord.js";
 const twitterConfig = require('./config');
-const Twitter = require('twitter-lite');
+import { TwitterApi } from 'twitter-api-v2';
 require('dotenv').config();
 
 const j = ['Jim', 'Jimmy', 'James', 'Jim-Jam', 'Jimbo', 'Jethan Jamble', 'Jimmothy', 'Jimster', 'uh... Son']
@@ -24,10 +24,10 @@ const voteThreshold = 3
 // reacc to use (get overriden to :hugh: id at runtime)
 let reacc = '🦆'
 
-const twitterClient = new Twitter(twitterConfig);
+const twitterClient = new TwitterApi(twitterConfig);
 
 async function postTweet(tweet: any) {
-    let result = await twitterClient.post('statuses/update', { status: tweet }).catch(console.error);
+    let { data: result } = await twitterClient.v2.tweet(tweet);
     console.log(`🦆 Successfully tweeted "${result.text}"`);
     return result;
 }
@@ -65,7 +65,7 @@ discordClient.on('messageReactionAdd', async reaction => {
         let result = await postTweet(repliedTo.content)
         let embed: MessageEmbed = new MessageEmbed()
         const content = `mmmmmm... ${user_ids.size} reaccs, thanks ${j[Math.floor(Math.random() * j.length)]}!`
-        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id_str}) for you`)
+        embed.setDescription(`I went ahead and [tweeted this](https://twitter.com/hugh_beta/status/${result.id}) for you`)
         let msg: MessageOptions = {content, embeds: [embed]}
         reaction.message.edit(msg)
     }
